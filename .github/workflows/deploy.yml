@@ -1,0 +1,45 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    concurrency: deploy-aquarium-${{ github.ref_name }}
+    environment: ${{ github.ref_name }}
+    env:
+      HOST_USERNAME: ${{ secrets.DEPLOYMENT_USERNAME }}@${{ secrets.DEPLOYMENT_HOST }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          java-version: 21
+          distribution: temurin
+      - name: Build
+        run: |
+          chmod +x ./gradlew
+          ./gradlew build --stacktrace
+      - name: Deploy
+        run: |
+          echo "${{ secrets.DEPLOYMENT_SSH_KEY }}" > ssh_key
+          chmod 700 ssh_key
+          
+          sftp -i ssh_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${{ env.HOST_USERNAME }} << EOF
+          put -r composeApp/build/wasmJs/productionExecutable aquarium_dist
+          exit
+          EOF
+          
+          ssh -i ssh_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${{ env.HOST_USERNAME }} << EOF
+          mkdir aquarium_dist_old || true
+          mv ${{ secrets.DEPLOYMENT_DIR }}/* aquarium_dist_old/
+          mv aquarium_dist/* ${{ secrets.DEPLOYMENT_DIR }}/
+          rm -r aquarium_dist_old
+          exit
+          EOF
