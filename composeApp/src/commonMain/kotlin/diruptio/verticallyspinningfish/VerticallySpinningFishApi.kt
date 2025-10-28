@@ -54,6 +54,7 @@ class VerticallySpinningFishApi(clientEngine: HttpClientEngine,
     val containerRemoveListeners: MutableList<(Container) -> Unit> = mutableListOf()
     val containerStatusListeners: MutableList<(Container) -> Unit> = mutableListOf()
     val playerConnectListeners: MutableList<(PlayerConnectUpdate) -> Unit> = mutableListOf()
+    val groupUpdateListeners: MutableList<(Group) -> Unit> = mutableListOf()
 
     suspend fun open(coroutineScope: CoroutineScope) {
         val deferred = CompletableDeferred<Unit>()
@@ -141,6 +142,16 @@ class VerticallySpinningFishApi(clientEngine: HttpClientEngine,
                     try { listener(update) } catch (_: Throwable) {}
                 }
             }
+            "group_update" -> {
+                val update = Json.decodeFromString<GroupUpdate>(data)
+                val group = groups.find { it.name == update.group.name }
+                if (group != null) {
+                    groups = groups - group + update.group
+                    groupUpdateListeners.forEach { listener ->
+                        try { listener(update.group) } catch (_: Throwable) {}
+                    }
+                }
+            }
         }
     }
 
@@ -211,6 +222,17 @@ class VerticallySpinningFishApi(clientEngine: HttpClientEngine,
             }
         } catch (e: Exception) {
             println("Failed to set status of container $containerId to $status: ${e.message}")
+        }
+    }
+
+    suspend fun updateGroup(group: GroupUpdateRequest) {
+        try {
+            httpClient.patch("$baseUrl/group") {
+                contentType(ContentType.Application.Json)
+                setBody(group)
+            }
+        } catch (e: Exception) {
+            println("Failed to update group ${group.name}: ${e.message}")
         }
     }
 }

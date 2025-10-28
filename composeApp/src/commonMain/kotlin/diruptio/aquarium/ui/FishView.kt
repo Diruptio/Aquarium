@@ -16,7 +16,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import diruptio.aquarium.core.Platform
 import diruptio.aquarium.ui.component.Headline
-import diruptio.aquarium.ui.component.RerenderOnUpdate
+import diruptio.aquarium.ui.component.RerenderOnContainerUpdate
+import diruptio.aquarium.ui.component.RerenderOnGroupUpdate
 import diruptio.verticallyspinningfish.Container
 import diruptio.verticallyspinningfish.Group
 import diruptio.verticallyspinningfish.VerticallySpinningFishApi
@@ -30,6 +31,18 @@ fun FishView(platform: Platform, coroutineScope: CoroutineScope, api: Vertically
         var selectedTab by remember { mutableStateOf(0) }
         var selectedGroup by remember { mutableStateOf<Group?>(null) }
         var selectedContainer by remember { mutableStateOf<Container?>(null) }
+
+        DisposableEffect(selectedGroup) {
+            val groupUpdateListener = { group: Group ->
+                if (group.name == selectedGroup?.name) {
+                    selectedGroup = group
+                }
+            }
+            api.groupUpdateListeners += groupUpdateListener
+            onDispose {
+                api.groupUpdateListeners -= groupUpdateListener
+            }
+        }
 
         Surface(
             modifier = Modifier.selectableGroup(),
@@ -70,8 +83,9 @@ fun FishView(platform: Platform, coroutineScope: CoroutineScope, api: Vertically
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             if (selectedGroup != null) {
-                RerenderOnUpdate(api) {
-                    GroupView(platform, coroutineScope, api, selectedGroup!!)
+                val groupState = remember(selectedGroup) { mutableStateOf(selectedGroup!!) }
+                RerenderOnContainerUpdate(api) {
+                    GroupView(platform, coroutineScope, api, groupState)
                 }
             } else if (selectedContainer != null) {
                 var forceRerenderKey by remember { mutableStateOf(0) }
@@ -99,13 +113,18 @@ fun FishView(platform: Platform, coroutineScope: CoroutineScope, api: Vertically
                     ContainerView(platform, coroutineScope, api, selectedContainer!!)
                 }
             } else {
-                RerenderOnUpdate(api) {
-                    when (selectedTab) {
-                        0 -> {
-                            Headline("Groups")
-                            GroupsTable(api) { selectedGroup = it }
+                when (selectedTab) {
+                    0 -> {
+                        RerenderOnGroupUpdate(api) {
+                            RerenderOnContainerUpdate(api) {
+                                Headline("Groups")
+                                GroupsTable(api) { selectedGroup = it }
+                            }
                         }
-                        1 -> {
+                    }
+
+                    1 -> {
+                        RerenderOnContainerUpdate(api) {
                             Headline("Containers")
                             ContainersTable(api) { selectedContainer = it }
                         }
