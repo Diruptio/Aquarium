@@ -144,47 +144,30 @@ class VerticallySpinningFishApi(clientEngine: HttpClientEngine,
             }
             "group_min_count" -> {
                 val update = Json.decodeFromString<GroupMinCountUpdate>(data)
-                val group = groups.find { it.name == update.name }
-                if (group != null) {
-                    val updatedGroup = group.copy(minCount = update.minCount)
-                    groups = groups - group + updatedGroup
-                    groupUpdateListeners.forEach { listener ->
-                        try { listener(updatedGroup) } catch (_: Throwable) {}
-                    }
-                }
+                updateGroupProperty(update.name) { it.copy(minCount = update.minCount) }
             }
             "group_min_port" -> {
                 val update = Json.decodeFromString<GroupMinPortUpdate>(data)
-                val group = groups.find { it.name == update.name }
-                if (group != null) {
-                    val updatedGroup = group.copy(minPort = update.minPort)
-                    groups = groups - group + updatedGroup
-                    groupUpdateListeners.forEach { listener ->
-                        try { listener(updatedGroup) } catch (_: Throwable) {}
-                    }
-                }
+                updateGroupProperty(update.name) { it.copy(minPort = update.minPort) }
             }
             "group_delete_on_stop" -> {
                 val update = Json.decodeFromString<GroupDeleteOnStopUpdate>(data)
-                val group = groups.find { it.name == update.name }
-                if (group != null) {
-                    val updatedGroup = group.copy(deleteOnStop = update.deleteOnStop)
-                    groups = groups - group + updatedGroup
-                    groupUpdateListeners.forEach { listener ->
-                        try { listener(updatedGroup) } catch (_: Throwable) {}
-                    }
-                }
+                updateGroupProperty(update.name) { it.copy(deleteOnStop = update.deleteOnStop) }
             }
             "group_tags" -> {
                 val update = Json.decodeFromString<GroupTagsUpdate>(data)
-                val group = groups.find { it.name == update.name }
-                if (group != null) {
-                    val updatedGroup = group.copy(tags = update.tags)
-                    groups = groups - group + updatedGroup
-                    groupUpdateListeners.forEach { listener ->
-                        try { listener(updatedGroup) } catch (_: Throwable) {}
-                    }
-                }
+                updateGroupProperty(update.name) { it.copy(tags = update.tags) }
+            }
+        }
+    }
+
+    private fun updateGroupProperty(groupName: String, updateFn: (Group) -> Group) {
+        val group = groups.find { it.name == groupName }
+        if (group != null) {
+            val updatedGroup = updateFn(group)
+            groups = groups - group + updatedGroup
+            groupUpdateListeners.forEach { listener ->
+                try { listener(updatedGroup) } catch (_: Throwable) {}
             }
         }
     }
