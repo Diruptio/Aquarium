@@ -10,13 +10,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import diruptio.aquarium.core.Platform
+import diruptio.aquarium.ui.component.Button
 import diruptio.aquarium.ui.component.CopyButton
 import diruptio.aquarium.ui.component.Headline
+import diruptio.aquarium.ui.component.IconButton
 import diruptio.aquarium.ui.component.Table
 import diruptio.aquarium.ui.component.Title
 import diruptio.verticallyspinningfish.Group
@@ -78,7 +78,7 @@ fun GroupView(
             cell(horizontalArrangement = Arrangement.SpaceBetween) {
                 Title("Minimum Instance Count")
                 if (!editing) {
-                    IconButton({ editing = true }, Modifier.pointerHoverIcon(PointerIcon.Hand)) {
+                    IconButton({ editing = true }) {
                         Icon(imageVector = Icons.Filled.Edit, contentDescription = null)
                     }
                 }
@@ -132,7 +132,7 @@ fun GroupView(
             cell(horizontalArrangement = Arrangement.SpaceBetween) {
                 Title("Minimum Port")
                 if (!editing) {
-                    IconButton({ editing = true }, Modifier.pointerHoverIcon(PointerIcon.Hand)) {
+                    IconButton({ editing = true }) {
                         Icon(imageVector = Icons.Filled.Edit, contentDescription = null)
                     }
                 }
@@ -172,7 +172,7 @@ fun GroupView(
             cell(horizontalArrangement = Arrangement.SpaceBetween) {
                 Title("Delete on Stop")
                 if (!editing) {
-                    IconButton({ editing = true }, Modifier.pointerHoverIcon(PointerIcon.Hand)) {
+                    IconButton({ editing = true }) {
                         Icon(imageVector = Icons.Filled.Edit, contentDescription = null)
                     }
                 }
@@ -208,7 +208,7 @@ fun GroupView(
             cell(horizontalArrangement = Arrangement.SpaceBetween) {
                 Title("Tags")
                 if (!editing) {
-                    IconButton({ editing = true }, Modifier.pointerHoverIcon(PointerIcon.Hand)) {
+                    IconButton({ editing = true }) {
                         Icon(imageVector = Icons.Filled.Edit, contentDescription = null)
                     }
                 }

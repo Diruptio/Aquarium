@@ -6,15 +6,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import diruptio.aquarium.core.Platform
 import diruptio.aquarium.ui.component.*
@@ -79,7 +75,7 @@ fun ContainerView(platform: Platform,
             cell(horizontalArrangement = Arrangement.SpaceBetween) {
                 Title("Status")
                 if (container.getStatus().isOnline) {
-                    IconButton({ editing = true }, Modifier.pointerHoverIcon(PointerIcon.Hand)) {
+                    IconButton({ editing = true }) {
                         Icon(imageVector = Icons.Filled.Edit, contentDescription = null)
                     }
                 }
