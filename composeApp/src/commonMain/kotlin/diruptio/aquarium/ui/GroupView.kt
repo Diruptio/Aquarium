@@ -20,7 +20,6 @@ import diruptio.aquarium.ui.component.Headline
 import diruptio.aquarium.ui.component.Table
 import diruptio.aquarium.ui.component.Title
 import diruptio.verticallyspinningfish.Group
-import diruptio.verticallyspinningfish.GroupUpdateRequest
 import diruptio.verticallyspinningfish.Status
 import diruptio.verticallyspinningfish.VerticallySpinningFishApi
 import kotlinx.coroutines.CoroutineScope
@@ -96,7 +95,7 @@ fun GroupView(
                             Row {
                                 IconButton(onClick = {
                                     coroutineScope.launch {
-                                        api.updateGroup(GroupUpdateRequest(name = group.name, minCount = minCount.toIntOrNull() ?: 0))
+                                        api.updateGroupMinCount(group.name, minCount.toIntOrNull() ?: 0)
                                         editing = false
                                     }
                                 }) {
@@ -150,7 +149,7 @@ fun GroupView(
                             Row {
                                 IconButton(onClick = {
                                     coroutineScope.launch {
-                                        api.updateGroup(GroupUpdateRequest(name = group.name, minPort = minPort.toIntOrNull() ?: 0))
+                                        api.updateGroupMinPort(group.name, minPort.toIntOrNull() ?: 0)
                                         editing = false
                                     }
                                 }) {
@@ -188,7 +187,7 @@ fun GroupView(
                         Checkbox(checked = deleteOnStop, onCheckedChange = { deleteOnStop = it })
                         IconButton(onClick = {
                             coroutineScope.launch {
-                                api.updateGroup(GroupUpdateRequest(name = group.name, deleteOnStop = deleteOnStop))
+                                api.updateGroupDeleteOnStop(group.name, deleteOnStop)
                                 editing = false
                             }
                         }) {
@@ -225,7 +224,7 @@ fun GroupView(
                             Row {
                                 IconButton(onClick = {
                                     coroutineScope.launch {
-                                        api.updateGroup(GroupUpdateRequest(name = group.name, tags = tags.lines().map { it.trim() }.filter { it.isNotEmpty() }.toSet()))
+                                        api.updateGroupTags(group.name, tags.lines().map { it.trim() }.filter { it.isNotEmpty() }.toSet())
                                         editing = false
                                     }
                                 }) {
