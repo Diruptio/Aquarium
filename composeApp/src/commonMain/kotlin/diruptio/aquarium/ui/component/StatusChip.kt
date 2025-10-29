@@ -21,6 +21,10 @@ fun StatusChip(status: Status) {
             Status.UNAVAILABLE -> Color(0xFFDDDD66)
         }
     ) {
-        Text(status.name, Modifier.padding(4.dp, 0.dp))
+        Text(
+            text = status.name,
+            modifier = Modifier.padding(4.dp, 0.dp),
+            color = MaterialTheme.colorScheme.primaryContainer,
+            style = MaterialTheme.typography.labelLarge)
     }
 }

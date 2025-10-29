@@ -5,7 +5,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,10 +19,20 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import diruptio.aquarium.core.getPlatform
+import diruptio.aquarium.ui.component.Button
 import diruptio.verticallyspinningfish.VerticallySpinningFishApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.ui.tooling.preview.Preview
+
+@Composable
+fun Providers(content: @Composable () -> Unit) {
+    MaterialTheme(colorScheme = appColorScheme, typography = appTypography) {
+        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
+            content()
+        }
+    }
+}
 
 @Preview
 @Composable
@@ -38,7 +53,7 @@ fun App() {
         }
     }
 
-    MaterialTheme {
+    Providers {
         Column(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.primaryContainer)
