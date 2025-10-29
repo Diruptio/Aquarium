@@ -3,4 +3,7 @@ package diruptio.verticallyspinningfish
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class GroupUpdate(val group: Group)
+data class GroupMinCountUpdateRequest(
+    val name: String,
+    val minCount: Int
+)

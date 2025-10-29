@@ -142,13 +142,47 @@ class VerticallySpinningFishApi(clientEngine: HttpClientEngine,
                     try { listener(update) } catch (_: Throwable) {}
                 }
             }
-            "group_update" -> {
-                val update = Json.decodeFromString<GroupUpdate>(data)
-                val group = groups.find { it.name == update.group.name }
+            "group_min_count" -> {
+                val update = Json.decodeFromString<GroupMinCountUpdate>(data)
+                val group = groups.find { it.name == update.name }
                 if (group != null) {
-                    groups = groups - group + update.group
+                    val updatedGroup = group.copy(minCount = update.minCount)
+                    groups = groups - group + updatedGroup
                     groupUpdateListeners.forEach { listener ->
-                        try { listener(update.group) } catch (_: Throwable) {}
+                        try { listener(updatedGroup) } catch (_: Throwable) {}
+                    }
+                }
+            }
+            "group_min_port" -> {
+                val update = Json.decodeFromString<GroupMinPortUpdate>(data)
+                val group = groups.find { it.name == update.name }
+                if (group != null) {
+                    val updatedGroup = group.copy(minPort = update.minPort)
+                    groups = groups - group + updatedGroup
+                    groupUpdateListeners.forEach { listener ->
+                        try { listener(updatedGroup) } catch (_: Throwable) {}
+                    }
+                }
+            }
+            "group_delete_on_stop" -> {
+                val update = Json.decodeFromString<GroupDeleteOnStopUpdate>(data)
+                val group = groups.find { it.name == update.name }
+                if (group != null) {
+                    val updatedGroup = group.copy(deleteOnStop = update.deleteOnStop)
+                    groups = groups - group + updatedGroup
+                    groupUpdateListeners.forEach { listener ->
+                        try { listener(updatedGroup) } catch (_: Throwable) {}
+                    }
+                }
+            }
+            "group_tags" -> {
+                val update = Json.decodeFromString<GroupTagsUpdate>(data)
+                val group = groups.find { it.name == update.name }
+                if (group != null) {
+                    val updatedGroup = group.copy(tags = update.tags)
+                    groups = groups - group + updatedGroup
+                    groupUpdateListeners.forEach { listener ->
+                        try { listener(updatedGroup) } catch (_: Throwable) {}
                     }
                 }
             }
@@ -225,14 +259,47 @@ class VerticallySpinningFishApi(clientEngine: HttpClientEngine,
         }
     }
 
-    suspend fun updateGroup(group: GroupUpdateRequest) {
+    suspend fun updateGroupMinCount(name: String, minCount: Int) {
         try {
-            httpClient.patch("$baseUrl/group") {
+            httpClient.patch("$baseUrl/group/min-count") {
                 contentType(ContentType.Application.Json)
-                setBody(group)
+                setBody(GroupMinCountUpdateRequest(name, minCount))
             }
         } catch (e: Exception) {
-            println("Failed to update group ${group.name}: ${e.message}")
+            println("Failed to update min-count of group $name: ${e.message}")
+        }
+    }
+
+    suspend fun updateGroupMinPort(name: String, minPort: Int) {
+        try {
+            httpClient.patch("$baseUrl/group/min-port") {
+                contentType(ContentType.Application.Json)
+                setBody(GroupMinPortUpdateRequest(name, minPort))
+            }
+        } catch (e: Exception) {
+            println("Failed to update min-port of group $name: ${e.message}")
+        }
+    }
+
+    suspend fun updateGroupDeleteOnStop(name: String, deleteOnStop: Boolean) {
+        try {
+            httpClient.patch("$baseUrl/group/delete-on-stop") {
+                contentType(ContentType.Application.Json)
+                setBody(GroupDeleteOnStopUpdateRequest(name, deleteOnStop))
+            }
+        } catch (e: Exception) {
+            println("Failed to update delete-on-stop of group $name: ${e.message}")
+        }
+    }
+
+    suspend fun updateGroupTags(name: String, tags: Set<String>) {
+        try {
+            httpClient.patch("$baseUrl/group/tags") {
+                contentType(ContentType.Application.Json)
+                setBody(GroupTagsUpdateRequest(name, tags))
+            }
+        } catch (e: Exception) {
+            println("Failed to update tags of group $name: ${e.message}")
         }
     }
 }
