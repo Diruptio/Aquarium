@@ -16,7 +16,7 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.material3.Button as MaterialButton
 
 /**
- * A Button component that wraps Material3 Button with a hand cursor on hover.
+ * A Button component that wraps Material3 Button with a hand cursor on hover when enabled.
  *
  * @param onClick The callback to be invoked when the button is clicked
  * @param modifier The modifier to be applied to the button
@@ -42,9 +42,15 @@ fun Button(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     content: @Composable RowScope.() -> Unit
 ) {
+    val buttonModifier = if (enabled) {
+        modifier.pointerHoverIcon(PointerIcon.Hand)
+    } else {
+        modifier
+    }
+    
     MaterialButton(
         onClick = onClick,
-        modifier = modifier.pointerHoverIcon(PointerIcon.Hand),
+        modifier = buttonModifier,
         enabled = enabled,
         shape = shape,
         colors = colors,
