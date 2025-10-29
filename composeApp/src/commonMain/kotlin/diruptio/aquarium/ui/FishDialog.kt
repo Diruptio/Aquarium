@@ -3,7 +3,6 @@ package diruptio.aquarium.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -12,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import diruptio.aquarium.core.Fish
+import diruptio.aquarium.ui.component.Button
 import diruptio.aquarium.ui.component.Dialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
